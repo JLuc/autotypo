@@ -15,7 +15,7 @@ non_breaking_space = u"\u00a0"
 non_breaking_thin_space = u"\u202f"
 thin_space = u"\u2009"
 
-def est_espace(text):
+def is_a_space(text):
     return (text == ' ') or (text == non_breaking_space) or (text == non_breaking_thin_space) or (text == thin_space)
 
 def ensure_space_before(text):
@@ -187,10 +187,10 @@ is_in_url = False
 while c <= (textlen - 1):
     # si on est à la fin, il faut tricher pour le dernier caractère
     if ((c + 1) > textlen - 1):
-        alafin = True
+        end_reached = True
         nextchar = ' '
     else:
-        alafin = False
+        end_reached = False
         scribus.selectText(c+1, 1, textbox)
         nextchar = scribus.getText(textbox)
        
@@ -208,8 +208,8 @@ while c <= (textlen - 1):
                 scribus.messageBox("Oops !", 'The text is not consistent. Closing doublequote missing before position '+str(c),
                         scribus.ICON_WARNING, scribus.BUTTON_OK)
         quotes_lastchange='open'
-        if ((replace_existing == 1) and (nextchar != space_character) and (not alafin)):
-            if (est_espace(nextchar)):
+        if ((replace_existing == 1) and (nextchar != space_character) and (not end_reached)):
+            if (is_a_space(nextchar)):
                 scribus.selectText(c+1, 1, textbox)
                 scribus.deleteText(textbox)
             scribus.insertText(space_character, c+1, textbox)
@@ -225,7 +225,7 @@ while c <= (textlen - 1):
                         scribus.ICON_WARNING, scribus.BUTTON_OK)
         quotes_lastchange = 'close'
         if ((replace_existing == 1)  and (prevchar != space_character) and (c > 1)):
-            if (est_espace(prevchar)):
+            if (is_a_space(prevchar)):
                 scribus.selectText(c-1, 1, textbox)
                 scribus.deleteText(textbox)
                 c=c-1
@@ -233,14 +233,14 @@ while c <= (textlen - 1):
             nbchange = nbchange+1
             c=c+space_len
    
-    elif (len(char) != 1): # en utf8 certains caractères ont len 2, par ex les espaces spéciaux qu'on teste au dessus
-         rien="rien"       # et ça ferait planter ord()
+    elif (len(char) != 1): 		# en utf8 certains caractères ont len 2, par ex les espaces spéciaux qu'on teste au dessus
+         do_nothing = "nothing_at_all"      # et ça ferait planter ord()
          
     elif (char == '"'): # autrement dit : ord (char)==34
         #si on trouve une double guillemet droit " en premier caractère du texte, c'est un ouvrant !
         if (c == 0):
             scribus.deleteText(textbox)
-            if (not est_espace(nextchar)):
+            if (not is_a_space(nextchar)):
                 scribus.insertText(space_character, 0, textbox)
             scribus.insertText(lead_double, 0, textbox)
             quotes_lastchange='open'
@@ -254,27 +254,27 @@ while c <= (textlen - 1):
         # 39 = ' straight apostrophe
         elif ((ord(prevchar) == 39) and ((nextchar != ' ') and (nextchar != ',') and (nextchar != ';') and (nextchar != '.'))):
             scribus.deleteText(textbox)
-            if (not est_espace(nextchar)):
+            if (not is_a_space(nextchar)):
                 scribus.insertText(space_character, c, textbox)
             scribus.insertText(lead_double, c, textbox)
             quotes_lastchange='open'
         elif ((nextchar == '.') or (nextchar == ',') or (nextchar == ';')):
             scribus.deleteText(textbox)
             scribus.insertText(follow_double, c, textbox)
-            if (not est_espace(prevchar)):
+            if (not is_a_space(prevchar)):
                 scribus.insertText(space_character, c, textbox)
                 c=c+space_len
             quotes_lastchange='close'
         elif (quotes_lastchange!='open'):
             scribus.deleteText(textbox)
-            if (not est_espace(nextchar)):
+            if (not is_a_space(nextchar)):
                 scribus.insertText(space_character, c, textbox)
             scribus.insertText(lead_double, c, textbox)
             quotes_lastchange='open'
         else:
             scribus.deleteText(textbox)
             scribus.insertText(follow_double, c, textbox)
-            if (not est_espace(prevchar)):
+            if (not is_a_space(prevchar)):
                 scribus.insertText(space_character, c, textbox)
                 c=c+space_len
             quotes_lastchange='close'
@@ -307,14 +307,14 @@ while c <= (textlen - 1):
         if (not is_in_url):
             is_in_url = (char==':') and (prevchar=='p') and (nextchar=='/')
         
-        if (not est_espace(prevchar)) and (not ensure_space_before(prevchar)) and (not is_in_url):
+        if (not is_a_space(prevchar)) and (not ensure_space_before(prevchar)) and (not is_in_url):
             scribus.deleteText(textbox)
             scribus.insertText(space_character, c, textbox)
             c += space_len
             scribus.insertText(char, c, textbox)
             nbchange = nbchange+1
 
-    elif est_espace(char):
+    elif is_a_space(char):
         is_in_url = False
 
     c += 1
