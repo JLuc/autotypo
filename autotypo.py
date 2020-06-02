@@ -9,6 +9,21 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 
+# INPUTS
+# - choose langage
+# - choose sort of space to add for typography : default is thin nonbreakable space.
+# - choose whether existing spaces should be replaced or not
+# FEATURES
+# - replaces " with « and » as required
+# - warns when « and » dont match or for other such issues
+# - adds choosen spaces after « and before »
+# - applies some heuristics (some would call that AI) to best deal with ' and "
+# - when langages is french, does more typography job :
+# - - replaces or adds the choosen space before ! ? ; : and …
+# - - doesnt mess urls = doesnt change http://scribus.net
+# - - only adds one choosen space before a set of double spaces as !!!?!
+# LIMITS
+
 import scribus
 
 non_breaking_space = u"\u00a0"
@@ -30,7 +45,7 @@ if scribus.haveDoc() <= 0:
 #
 # First choice for langage
 #
-lang = scribus.valueDialog("Language", 'Choose language or country\n(fr) Choisissez la langue du texte ou le pays :\naf, be, ch, cs, de, de-g, en, es, et, fi, fr,\n hu, is, lt, mk, nl, pl, ru, se, sk, sl, sq and uk', 'fr')
+lang = scribus.valueDialog("Language", 'Choose language or country\nChoisissez la langue du texte ou le pays :\n  af, be, ch, cs, de, de-g, en, es, et, fi, fr,\n  hu, is, lt, mk, nl, pl, ru, se, sk, sl, sq and uk', 'fr')
 if (lang == 'en'):
     lead_double = u"\u201c" #lead_double
     follow_double = u"\u201d" #follow_double
@@ -128,11 +143,11 @@ if scribus.selectionCount() > 1:
 
 if (lang =='fr'):
     space_type = scribus.valueDialog("Type d'espace",
-                "Selon les polices de caractère utilisées, choisissez le type d'espace ajouté avec les doubles guillemets français, lorsqu'il n'y en a pas déjà un.\n0 : aucun espace ajouté ; 1 : insécable fine ; 2 : insécable ; 3 : fine",
+                "Selon les polices de caractère utilisées,\nchoisissez le type d'espace ajouté avec les doubles guillemets français\net avant les signes doubles :\n  0 : aucun espace ajouté\n  1 : insécable fine\n  2 : insécable\n  3 : fine",
                 '1')
 else :
    space_type = scribus.valueDialog("Inside quote added space",
-                "Depending on the used fonts, choose the space to be added inside \ndouble quotes, in case there are none already.\n0 : dont add a space ; 1 : non breaking thin ; 2 : non breaking ; 3 : thin",
+                "Depending on the used fonts, choose the space to be added inside \ndouble quotes, in case there are none already.\n  0 : dont add a space\n  1 : non breaking thin\n  2 : non breaking\n  3 : thin",
                 '0')
 
 if (space_type == '3'):
@@ -150,11 +165,11 @@ else:
 
 if (lang =='fr'):
     replace_existing = scribus.valueDialog("Agir sur l'existant ?",
-            "Voulez vous aussi appliquer ce traitement sur les double-guillemets français déjà en place ? Oui: O ; Non : N ",
+            "Voulez vous aussi appliquer ce traitement sur les double-guillemets français déjà en place ?\n  O : Oui\n  N : Non ",
             'O')
 else:
    replace_existing = scribus.valueDialog("What about existing quotes ?",
-            "Should the script ALSO apply your spaces-choice on already existing quotes? Yes : Y ; No : N",
+            "Should the script ALSO apply your spaces-choice on already existing quotes?\n  Y : Yes\n  N : No",
             'N')
 
 if (replace_existing == 'n') or (replace_existing == 'N'):
@@ -320,7 +335,6 @@ while c <= (textlen - 1):
     c += 1
     prevchar = char
     textlen = scribus.getTextLength(textbox)
-
 
 debugmessage = ''
 
