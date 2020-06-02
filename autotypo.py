@@ -22,7 +22,7 @@
 # - when langages is french, does more typography job :
 # - - replaces or adds the choosen space before ! ? ; : and …
 # - - doesnt mess urls = doesnt change http://scribus.net
-# - - only adds one choosen space before a set of double spaces as !!!?!
+# - - only adds one choosen space before a set of double ponctuations as "!!!?!"
 # LIMITS
 # - recognizes urls with "p:/" pattern : it matches http://... but there could be false positive
 # - same choosen space for « » ; ! ; : …
