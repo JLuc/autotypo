@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # File: autotypo.py - fix a text typography according to french typo rules for original autoquote file
-# © 2020.06 Creation of autotypo by JLuc following © 2013 enhancements by JLuc of © 2010 autoquote.py by Gregory Pittman
+# © 2020.06 Creation of autotypo by JLuc following © 2013 autoquote2 enhancements by JLuc of © 2010 autoquote.py by Gregory Pittman
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
