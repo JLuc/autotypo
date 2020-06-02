@@ -10,6 +10,7 @@
 # (at your option) any later version.
 
 # INPUTS
+# - choose a text frame, launch script
 # - choose langage
 # - choose sort of space to add for typography : default is thin nonbreakable space.
 # - choose whether existing spaces should be replaced or not
@@ -23,6 +24,9 @@
 # - - doesnt mess urls = doesnt change http://scribus.net
 # - - only adds one choosen space before a set of double spaces as !!!?!
 # LIMITS
+# - recognizes urls with "p:/" pattern : it matches http://... but there could be false positive
+# - same choosen space for « » ; ! ; : …
+# - space is added or replaced with absolutely no local font awareness
 
 import scribus
 
