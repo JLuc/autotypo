@@ -169,7 +169,7 @@ else:
 
 if (lang =='fr'):
     replace_existing = scribus.valueDialog("Agir sur l'existant ?",
-            "Voulez vous aussi appliquer ce traitement sur les double-guillemets français déjà en place ?\n  O : Oui\n  N : Non ",
+            "Voulez-vous aussi appliquer votre choix d'espaces sur les double-guillemets français déjà en place ?\n  O : Oui\n  N : Non ",
             'O')
 else:
    replace_existing = scribus.valueDialog("What about existing quotes ?",
