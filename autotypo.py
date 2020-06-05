@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# File: autotypo.py Version : 1.0.0
+# File: autotypo.py Version : 1.0.1
 # Fixes typewriter, single and double quotes along with their leading and following spaces 
 # + fixes double spaces everywhere + applies french typography when langage is french
 # © 2020.06 Creation of autotypo by JLuc following © 2013 autoquote2 enhancements by JLuc of © 2010 autoquote.py by Gregory Pittman
@@ -371,7 +371,7 @@ while c <= (textlen - 1):
 
     elif is_a_space(char):
       is_in_url = False
-      if merge_spaces and is_a_space(prevchar):
+      if merge_spaces and is_a_space(nextchar): # only keeps last space of a set
         scribus.deleteText(textbox)
         c -= 1
         nbchange = nbchange+1
