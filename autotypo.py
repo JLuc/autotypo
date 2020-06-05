@@ -40,6 +40,7 @@ do_ask = True
 space_type=1
 lang='fr'
 replace_existing=True
+merge_spaces=True
 
 def is_a_space(text):
     return (text == ' ') or (text == non_breaking_space) or (text == non_breaking_thin_space) or (text == thin_space)
@@ -190,6 +191,20 @@ if (replace_existing == 'n') or (replace_existing == 'N'):
     replace_existing=False
 else:
     replace_existing=True
+
+if do_ask:
+  if (lang =='fr'):
+    merge_spaces = scribus.valueDialog("Espaces multiples",
+      "Voulez vous dédoublonner les espaces qui se suivent ?\n  O : Oui\n  N : Non ",
+      'O')
+  else:
+    merge_spaces = scribus.valueDialog("Space'n'spaces",
+      "Do you want to merge spaces ?\n  Y : Yes\n  N : No ",
+      'Y')
+if (merge_spaces == 'N') or (merge_spaces == 'n'):
+    merge_spaces = False
+else:
+	merge_spaces = True
 
 textbox = scribus.getSelectedObject()
 boxcount = 1
@@ -354,7 +369,11 @@ while c <= (textlen - 1):
                 nbchange = nbchange+1
 
     elif is_a_space(char):
-        is_in_url = False
+      is_in_url = False
+      if merge_spaces and is_a_space(prevchar):
+        scribus.deleteText(textbox)
+        c -= 1
+        nbchange = nbchange+1
 
     c += 1
     prevchar = char
