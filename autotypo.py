@@ -22,17 +22,24 @@
 # - when langages is french, does more typography job :
 # - - replaces or adds the choosen space before ! ? ; : and …
 # - - doesnt mess urls = doesnt change http://scribus.net
-# - - only adds one choosen space before a set of double ponctuations as "!!!?!"
+# - - only adds one choosen space before a set of double spaces as !!!?!
+# - provides a just-go-ahead-dont-ask-for-options mode for geeks : juste change do_ask value to False in script
 # LIMITS
-# - recognizes urls with "p:/" pattern : it matches http://... but there could be false positive
+# - recognizes urls with "p:/" or "ww." patterns (=> possible false positive)
 # - same choosen space for « » ; ! ; : …
-# - space is added or replaced with absolutely no local font awareness
+# - space is added or replaced with absolutely no local-font awareness
+# - only manages selected frame and doesnt follow links accross linked text frames
 
 import scribus
 
 non_breaking_space = u"\u00a0"
 non_breaking_thin_space = u"\u202f"
 thin_space = u"\u2009"
+do_ask = True
+# default values when not asking
+space_type=1
+lang='fr'
+replace_existing=True
 
 def is_a_space(text):
     return (text == ' ') or (text == non_breaking_space) or (text == non_breaking_thin_space) or (text == thin_space)
@@ -49,7 +56,8 @@ if scribus.haveDoc() <= 0:
 #
 # First choice for langage
 #
-lang = scribus.valueDialog("Language", 'Choose language or country\nChoisissez la langue du texte ou le pays :\n  af, be, ch, cs, de, de-g, en, es, et, fi, fr,\n  hu, is, lt, mk, nl, pl, ru, se, sk, sl, sq and uk', 'fr')
+if do_ask:
+    lang = scribus.valueDialog("Language", 'Choose language or country\nChoisissez la langue du texte ou le pays :\n  af, be, ch, cs, de, de-g, en, es, et, fi, fr,\n  hu, is, lt, mk, nl, pl, ru, se, sk, sl, sq and uk', 'fr')
 if (lang == 'en'):
     lead_double = u"\u201c" #lead_double
     follow_double = u"\u201d" #follow_double
@@ -145,12 +153,13 @@ if scribus.selectionCount() > 1:
             "You have more than one object selected.\nPlease select one text frame and try again.", scribus.ICON_WARNING, scribus.BUTTON_OK)
     sys.exit(2)
 
-if (lang =='fr'):
-    space_type = scribus.valueDialog("Type d'espace",
+if do_ask:
+    if (lang =='fr'):
+        space_type = scribus.valueDialog("Type d'espace",
                 "Selon les polices de caractère utilisées,\nchoisissez le type d'espace ajouté avec les doubles guillemets français\net avant les signes doubles :\n  0 : aucun espace ajouté\n  1 : insécable fine\n  2 : insécable\n  3 : fine",
                 '1')
-else :
-   space_type = scribus.valueDialog("Inside quote added space",
+    else:
+        space_type = scribus.valueDialog("Inside quote added space",
                 "Depending on the used fonts, choose the space to be added inside \ndouble quotes, in case there are none already.\n  0 : dont add a space\n  1 : non breaking thin\n  2 : non breaking\n  3 : thin",
                 '0')
 
@@ -167,19 +176,20 @@ else:
     space_character = non_breaking_space
     space_len = 1
 
-if (lang =='fr'):
+if do_ask:
+  if (lang =='fr'):
     replace_existing = scribus.valueDialog("Agir sur l'existant ?",
-            "Voulez-vous aussi appliquer votre choix d'espaces sur les double-guillemets français déjà en place ?\n  O : Oui\n  N : Non ",
+            "Voulez vous aussi appliquer ce traitement sur les double-guillemets français déjà en place ?\n  O : Oui\n  N : Non ",
             'O')
-else:
-   replace_existing = scribus.valueDialog("What about existing quotes ?",
+  else:
+    replace_existing = scribus.valueDialog("What about existing quotes ?",
             "Should the script ALSO apply your spaces-choice on already existing quotes?\n  Y : Yes\n  N : No",
             'N')
 
 if (replace_existing == 'n') or (replace_existing == 'N'):
-    replace_existing=0
+    replace_existing=False
 else:
-    replace_existing=1
+    replace_existing=True
 
 textbox = scribus.getSelectedObject()
 boxcount = 1
@@ -227,7 +237,7 @@ while c <= (textlen - 1):
                 scribus.messageBox("Oops !", 'The text is not consistent. Closing doublequote missing before position '+str(c),
                         scribus.ICON_WARNING, scribus.BUTTON_OK)
         quotes_lastchange='open'
-        if ((replace_existing == 1) and (nextchar != space_character) and (not end_reached)):
+        if (replace_existing and (nextchar != space_character) and (not end_reached)):
             if (is_a_space(nextchar)):
                 scribus.selectText(c+1, 1, textbox)
                 scribus.deleteText(textbox)
@@ -243,7 +253,7 @@ while c <= (textlen - 1):
                 scribus.messageBox("Oops !", 'The text is not consistent. Opening doublequote missing before position '+str(c),
                         scribus.ICON_WARNING, scribus.BUTTON_OK)
         quotes_lastchange = 'close'
-        if ((replace_existing == 1)  and (prevchar != space_character) and (c > 1)):
+        if (replace_existing  and (prevchar != space_character) and (c > 1)):
             if (is_a_space(prevchar)):
                 scribus.selectText(c-1, 1, textbox)
                 scribus.deleteText(textbox)
@@ -322,16 +332,26 @@ while c <= (textlen - 1):
             scribus.insertText(follow_single, c, textbox)
         nbchange = nbchange+1
 
-    elif ensure_space_before(char):
+    elif (c>0) and ensure_space_before(char):
         if (not is_in_url):
-            is_in_url = (char==':') and (prevchar=='p') and (nextchar=='/')
-        
-        if (not is_a_space(prevchar)) and (not ensure_space_before(prevchar)) and (not is_in_url):
-            scribus.deleteText(textbox)
-            scribus.insertText(space_character, c, textbox)
-            c += space_len
-            scribus.insertText(char, c, textbox)
-            nbchange = nbchange+1
+            is_in_url = ((prevchar=='p') and (char==':') and (nextchar=='/')) or ((prevchar=='w') and (char=='w') and (nextchar=='.'))
+                  
+        if (not is_in_url) and (prevchar != space_character) and (not ensure_space_before(prevchar)):
+
+            if (is_a_space(prevchar) and replace_existing):
+                c -= 1
+                scribus.selectText(c, 1, textbox)	
+                scribus.deleteText(textbox)		# deletes previous unwanted space
+                scribus.selectText(c, 1, textbox)	
+                scribus.insertText(space_character, c, textbox)
+                c += space_len
+                nbchange = nbchange+1
+
+            elif (not is_a_space(prevchar)):
+                scribus.messageBox("Sélection", "trouvé SANS espace avant :"+scribus.getText(textbox), icon=scribus.ICON_NONE, button1=scribus.BUTTON_OK)
+                scribus.insertText(space_character, c, textbox)
+                c += space_len
+                nbchange = nbchange+1
 
     elif is_a_space(char):
         is_in_url = False
@@ -341,10 +361,8 @@ while c <= (textlen - 1):
     textlen = scribus.getTextLength(textbox)
 
 debugmessage = ''
-
 scribus.setRedraw(1)
 scribus.docChanged(1)
-
 if (lang == 'fr'):
     scribus.messageBox("Fini", 'Les corrections typographiques ont été faites.\n'+str(nbchange)+' changements' + debugmessage,
                         icon=scribus.ICON_NONE, button1=scribus.BUTTON_OK)
