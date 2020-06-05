@@ -364,12 +364,13 @@ while c <= (textlen - 1):
                 scribus.insertText(space_character, c, textbox)
                 c += space_len
                 nbchange = nbchange+1
+                scribus.setRedraw(1)
 
             elif (not is_a_space(prevchar)):
-                scribus.messageBox("Sélection", "trouvé SANS espace avant :"+scribus.getText(textbox), icon=scribus.ICON_NONE, button1=scribus.BUTTON_OK)
                 scribus.insertText(space_character, c, textbox)
                 c += space_len
                 nbchange = nbchange+1
+                scribus.setRedraw(1)
 
     elif is_a_space(char):
       is_in_url = False
@@ -377,6 +378,7 @@ while c <= (textlen - 1):
         scribus.deleteText(textbox)
         c -= 1
         nbchange = nbchange+1
+        scribus.setRedraw(1)
 
     c += 1
     prevchar = char
