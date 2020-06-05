@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# File: autotypo.py - fix typewriter, single and double quotes along with their spaces,
-# and applies french typography to text when langage is french
+# File: autotypo.py Version : 1.0.0
+# Fixes typewriter, single and double quotes along with their leading and following spaces 
+# + fixes double spaces everywhere + applies french typography when langage is french
 # © 2020.06 Creation of autotypo by JLuc following © 2013 autoquote2 enhancements by JLuc of © 2010 autoquote.py by Gregory Pittman
 #
 # This program is free software; you can redistribute it and/or modify
