@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# File: autotypo.py Version : 1.0.2
+# File: autotypo.py Version : 1.0.1
 # Fixes typewriter, single and double quotes along with their leading and following spaces 
 # + fixes double spaces everywhere + applies french typography when langage is french
 # © 2020.06 Creation of autotypo by JLuc following © 2013 autoquote2 enhancements by JLuc of © 2010 autoquote.py by Gregory Pittman
@@ -38,8 +38,9 @@ import scribus
 non_breaking_space = u"\u00a0"
 non_breaking_thin_space = u"\u202f"
 thin_space = u"\u2009"
+do_ask=False
 do_ask = True
-# do_ask=False
+
 # default values when not asking
 lang='fr'
 space_character=non_breaking_thin_space
@@ -64,6 +65,7 @@ if scribus.haveDoc() <= 0:
 #
 if do_ask:
     lang = scribus.valueDialog("Language", 'Choose language or country\nChoisissez la langue du texte ou le pays :\n  af, be, ch, cs, de, de-g, en, es, et, fi, fr,\n  hu, is, lt, mk, nl, pl, ru, se, sk, sl, sq and uk', 'fr')
+
 if (lang == 'en'):
     lead_double = u"\u201c" #lead_double
     follow_double = u"\u201d" #follow_double
@@ -159,30 +161,30 @@ if scribus.selectionCount() > 1:
             "You have more than one object selected.\nPlease select one text frame and try again.", scribus.ICON_WARNING, scribus.BUTTON_OK)
     sys.exit(2)
 
+# Following dialogs are i18ned
 if do_ask:
-    if (lang =='fr'):
-        space_type = scribus.valueDialog("Type d'espace",
+  if (lang =='fr'):
+    space_type = scribus.valueDialog("Type d'espace",
                 "Selon les polices de caractère utilisées,\nchoisissez le type d'espace ajouté avec les doubles guillemets français\net avant les signes doubles :\n  0 : aucun espace ajouté\n  1 : insécable fine\n  2 : insécable\n  3 : fine",
                 '1')
-    else:
-        space_type = scribus.valueDialog("Inside quote added space",
+  else:
+    space_type = scribus.valueDialog("Inside quote added space",
                 "Depending on the used fonts, choose the space to be added inside \ndouble quotes, in case there are none already.\n  0 : dont add a space\n  1 : non breaking thin\n  2 : non breaking\n  3 : thin",
                 '0')
 
-    if (space_type == '3'):
-      space_character = thin_space
-      space_len = 1
-    elif (space_type == '1'):
-      space_character = non_breaking_thin_space
-      space_len = 1
-    elif (space_type == '0'):
-      space_character = ''
-      space_len = 0
-    else:
-      space_character = non_breaking_space
-      space_len = 1
+  if (space_type == '3'):
+    space_character = thin_space
+    space_len = 1
+  elif (space_type == '1'):
+    space_character = non_breaking_thin_space
+    space_len = 1
+  elif (space_type == '0'):
+    space_character = ''
+    space_len = 0
+  else:
+    space_character = non_breaking_space
+    space_len = 1
 
-if do_ask:
   if (lang =='fr'):
     replace_existing = scribus.valueDialog("Agir sur l'existant ?",
             "Voulez vous aussi appliquer votre choix d'espaces sur les espaces déjà en place pour les double-guillemets et signes doubles (si cette option est retenue) ?\n  O : Oui\n  N : Non ",
@@ -191,13 +193,11 @@ if do_ask:
     replace_existing = scribus.valueDialog("What about existing quotes ?",
             "Should the script ALSO apply your spaces-choice on already existing quotes?\n  Y : Yes\n  N : No",
             'N')
-
-if (replace_existing == 'n') or (replace_existing == 'N'):
+  if (replace_existing == 'n') or (replace_existing == 'N'):
     replace_existing=False
-else:
+  else:
     replace_existing=True
 
-if do_ask:
   if (lang =='fr'):
     merge_spaces = scribus.valueDialog("Espaces multiples",
       "Voulez vous dédoublonner les espaces qui se suivent ?\n  O : Oui\n  N : Non ",
@@ -206,10 +206,10 @@ if do_ask:
     merge_spaces = scribus.valueDialog("Space'n'spaces",
       "Do you want to merge spaces ?\n  Y : Yes\n  N : No ",
       'Y')
-if (merge_spaces == 'N') or (merge_spaces == 'n'):
+  if (merge_spaces == 'N') or (merge_spaces == 'n'):
     merge_spaces = False
-else:
-	merge_spaces = True
+  else:
+    merge_spaces = True
 
 textbox = scribus.getSelectedObject()
 boxcount = 1
@@ -282,7 +282,7 @@ while c <= (textlen - 1):
             nbchange = nbchange+1
             c=c+space_len
    
-    elif (len(char) != 1): 		# en utf8 certains caractères ont len 2, par ex les espaces spéciaux qu'on teste au dessus
+    elif (len(char) != 1):         # en utf8 certains caractères ont len 2, par ex les espaces spéciaux qu'on teste au dessus
          do_nothing = "nothing_at_all"      # et ça ferait planter ord()
          
     elif (char == '"'): # autrement dit : ord (char)==34
@@ -360,9 +360,9 @@ while c <= (textlen - 1):
 
             if (is_a_space(prevchar) and replace_existing):
                 c -= 1
-                scribus.selectText(c, 1, textbox)	
-                scribus.deleteText(textbox)		# deletes previous unwanted space
-                scribus.selectText(c, 1, textbox)	
+                scribus.selectText(c, 1, textbox)    
+                scribus.deleteText(textbox)        # deletes previous unwanted space
+                scribus.selectText(c, 1, textbox)    
                 scribus.insertText(space_character, c, textbox)
                 c += space_len
                 nbchange = nbchange+1
