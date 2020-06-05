@@ -15,11 +15,13 @@
 # - choose langage
 # - choose sort of space to add for typography : default is thin nonbreakable space.
 # - choose whether existing spaces should be replaced or not
+# - choose whether set of spaces should be merged into one
 # FEATURES
 # - replaces " with « and » as required
 # - warns when « and » dont match or for other such issues
 # - adds choosen spaces after « and before »
 # - applies some heuristics (some would call that AI) to best deal with ' and "
+# - replace multiple following spaces with just one
 # - when langages is french, does more typography job :
 # - - replaces or adds the choosen space before ! ? ; : and …
 # - - doesnt mess urls = doesnt change http://scribus.net
