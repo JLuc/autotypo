@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# File: autotypo.py Version : 1.0.1
+# File: autotypo.py Version : 1.0.2
 # Fixes typewriter, single and double quotes along with their leading and following spaces 
 # + fixes double spaces everywhere + applies french typography when langage is french
 # © 2020.06 Creation of autotypo by JLuc following © 2013 autoquote2 enhancements by JLuc of © 2010 autoquote.py by Gregory Pittman
@@ -39,9 +39,11 @@ non_breaking_space = u"\u00a0"
 non_breaking_thin_space = u"\u202f"
 thin_space = u"\u2009"
 do_ask = True
+# do_ask=False
 # default values when not asking
-space_type=1
 lang='fr'
+space_character=non_breaking_thin_space
+space_len=1
 replace_existing=True
 merge_spaces=True
 
@@ -167,18 +169,18 @@ if do_ask:
                 "Depending on the used fonts, choose the space to be added inside \ndouble quotes, in case there are none already.\n  0 : dont add a space\n  1 : non breaking thin\n  2 : non breaking\n  3 : thin",
                 '0')
 
-if (space_type == '3'):
-    space_character = thin_space
-    space_len = 1
-elif (space_type == '1'):
-    space_character = non_breaking_thin_space
-    space_len = 1
-elif (space_type == '0'):
-    space_character = ''
-    space_len = 0
-else:
-    space_character = non_breaking_space
-    space_len = 1
+    if (space_type == '3'):
+      space_character = thin_space
+      space_len = 1
+    elif (space_type == '1'):
+      space_character = non_breaking_thin_space
+      space_len = 1
+    elif (space_type == '0'):
+      space_character = ''
+      space_len = 0
+    else:
+      space_character = non_breaking_space
+      space_len = 1
 
 if do_ask:
   if (lang =='fr'):
