@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# File: autotypo.py Version : 1.1.0
+# File: autotypo.py Version : 1.1.1
 # Fixes typewriter, single and double quotes along with their leading and following spaces 
 # + fixes double spaces everywhere + applies french typography when langage is french
 # © 2020.06 Creation of autotypo by JLuc following © 2013 autoquote2 enhancements by JLuc of © 2010 autoquote.py by Gregory Pittman
@@ -38,8 +38,10 @@ import scribus
 non_breaking_space = u"\u00a0"
 non_breaking_thin_space = u"\u202f"
 thin_space = u"\u2009"
-# do_ask = True
-do_ask=False
+
+# Comment whichever line you wish to avoid
+do_ask = True
+# do_ask=False
 
 # default values when not asking
 lang='fr'
