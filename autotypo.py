@@ -31,7 +31,7 @@
 # - recognizes urls with "p:/" or "ww." patterns (=> possible false positive)
 # - same choosen space for « » ; ! ; : …
 # - space is added or replaced with absolutely no local-font awareness
-# - only manages selected frame and doesnt follow links accross linked text frames
+# - only manages selected frame and doesnt follow links accross linked text frames <-- PR wanted
 
 import scribus
 
