@@ -38,8 +38,8 @@ import scribus
 non_breaking_space = u"\u00a0"
 non_breaking_thin_space = u"\u202f"
 thin_space = u"\u2009"
+# do_ask = True
 do_ask=False
-do_ask = True
 
 # default values when not asking
 lang='fr'
@@ -47,6 +47,10 @@ space_character=non_breaking_thin_space
 space_len=1
 replace_existing=True
 merge_spaces=True
+do_hyphenate=True
+
+if do_ask:
+	do_hyphenate=False
 
 def is_a_space(text):
     return (text == ' ') or (text == non_breaking_space) or (text == non_breaking_thin_space) or (text == thin_space)
@@ -232,6 +236,9 @@ nbchange = 0
 quotes_lastchange = 'close' # la prochaine quote doit être ouvrante
 prevchar = ' '
 is_in_url = False
+
+if do_hyphenate:
+    scribus.hyphenateText();
 
 while c <= (textlen - 1):
     # si on est à la fin, il faut tricher pour le dernier caractère
