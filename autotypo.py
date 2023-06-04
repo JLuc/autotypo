@@ -40,8 +40,8 @@ non_breaking_thin_space = u"\u202f"
 thin_space = u"\u2009"
 
 # Comment whichever line you wish to avoid
-do_ask = True
-# do_ask=False
+# do_ask = True
+do_ask=False
 
 # default values when not asking
 lang='fr'
@@ -50,9 +50,11 @@ space_len=1
 replace_existing=True
 merge_spaces=True
 do_hyphenate=True
+with_feedback=False
 
 if do_ask:
 	do_hyphenate=False
+	with_feedback=True
 
 def is_a_space(text):
     return (text == ' ') or (text == non_breaking_space) or (text == non_breaking_thin_space) or (text == thin_space)
@@ -398,9 +400,10 @@ while c <= (textlen - 1):
 debugmessage = ''
 scribus.setRedraw(1)
 scribus.docChanged(1)
-if (lang == 'fr'):
+if with_feedback:
+  if (lang == 'fr'):
     scribus.messageBox("Fini", 'Les corrections typographiques ont été faites.\n'+str(nbchange)+' changements' + debugmessage,
                         icon=scribus.ICON_NONE, button1=scribus.BUTTON_OK)
-else:
+  else:
     scribus.messageBox("Done", 'Successfully ran script\n'+str(nbchange)+' replacements have occurred' + debugmessage, # Change this message to your liking
                         icon=scribus.ICON_NONE, button1=scribus.BUTTON_OK)
